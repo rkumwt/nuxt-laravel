@@ -1,26 +1,40 @@
-*.log
-.DS_Store
-.env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.fleet
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+# Dependencies
+/vendor
 /node_modules
+
+# Environment (keep only the example)
+.env
+.env.*
+!.env.example
+
+# Build / runtime output
 /public/build
 /public/hot
 /public/storage
 /storage/*.key
 /storage/pail
-/vendor
+# SQLite databases are ignored in database/.gitignore; storage/ subfolders
+# have their own .gitignore files (Laravel default)
+
+# Testing / tooling caches
+/.phpunit.cache
+.phpunit.result.cache
+/coverage
+.php-cs-fixer.cache
+.phpactor.json
+auth.json
+
+# Logs
+*.log
+
+# OS / editors
+.DS_Store
+Thumbs.db
+/.fleet
+/.idea
+/.nova
+/.vscode
+/.zed
+.history
 Homestead.json
 Homestead.yaml
-Thumbs.db
-.history
-.history/*

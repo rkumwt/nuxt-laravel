@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+*.tsbuildinfo
+
+# Generated Prisma Client (recreated by `npm install` / `npm run db:generate`)
+src/generated
+
+# Testing
+coverage
+
+# Environment (keep the example and the secret-free test config)
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+
+# Tool folders created by `prisma init`
+.claude
+.agents
+.windsurf
+skills-lock.json

@@ -1,0 +1,41 @@
+# Monorepo root. Each project (backend, backend-express, backend-nestjs,
+# frontend, frontend-next) also has its own .gitignore; the rules below are a
+# safety net that applies to every folder.
+
+# Dependencies and build output (reinstalled / rebuilt from source)
+node_modules/
+vendor/
+dist/
+.nuxt/
+.output/
+.next/
+coverage/
+*.tsbuildinfo
+
+# Environment files with real values (examples are committed)
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors / IDEs
+.idea/
+.vscode/
+.fleet/
+.zed/
+*.swp
+*.swo
+*~
+
+# Local AI-agent / tool settings
+.claude/
+.cursor/
+.windsurf/
+.agents/
+
+# Logs
+*.log
+logs/

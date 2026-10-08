@@ -1,0 +1,126 @@
+// Ported from the Laravel migrations in ../backend/database/migrations.
+// Models use camelCase in code and snake_case table/column names in Postgres.
+
+generator client {
+  provider               = "prisma-client"
+  output                 = "../src/generated/prisma"
+  moduleFormat           = "esm"
+  runtime                = "nodejs"
+  generatedFileExtension = "ts"
+  importFileExtension    = "js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserType {
+  superadmin
+  admin
+  member
+
+  @@map("user_type")
+}
+
+enum UserStatus {
+  pending
+  enabled
+
+  @@map("user_status")
+}
+
+model Company {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(255)
+  email        String   @db.VarChar(255)
+  totalUsers   Int      @default(1) @map("total_users")
+  totalUrls    Int      @default(0) @map("total_urls")
+  totalUrlHits Int      @default(0) @map("total_url_hits")
+  // The platform owner's company; clients are invited into it
+  isGlobal     Boolean  @default(false) @map("is_global")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  users       User[]
+  shortUrls   ShortUrl[]
+  invitations Invitation[]
+
+  @@index([isGlobal])
+  @@map("companies")
+}
+
+model User {
+  id           Int        @id @default(autoincrement())
+  companyId    Int        @map("company_id")
+  name         String     @db.VarChar(255)
+  email        String     @unique @db.VarChar(255)
+  password     String?    @db.VarChar(255)
+  type         UserType   @default(admin)
+  status       UserStatus @default(pending)
+  totalUrls    Int        @default(0) @map("total_urls")
+  totalUrlHits Int        @default(0) @map("total_url_hits")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  company      Company               @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  shortUrls    ShortUrl[]
+  accessTokens PersonalAccessToken[]
+
+  @@index([companyId])
+  @@map("users")
+}
+
+model ShortUrl {
+  id           Int      @id @default(autoincrement())
+  companyId    Int      @map("company_id")
+  url          String
+  // Unique + indexed: every redirect looks the link up by code
+  shortUrlCode String   @unique @map("short_url_code") @db.VarChar(20)
+  hits         Int      @default(0)
+  createdBy    Int      @map("created_by")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  creator User    @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+
+  @@index([companyId, createdAt])
+  @@index([createdBy])
+  @@index([createdAt])
+  @@map("short_urls")
+}
+
+model Invitation {
+  id         Int      @id @default(autoincrement())
+  companyId  Int      @map("company_id")
+  name       String   @db.VarChar(255)
+  email      String   @unique @db.VarChar(255)
+  // Cleared once the invitation has been used
+  inviteCode String?  @unique @map("invite_code") @db.VarChar(20)
+  role       UserType @default(member)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@map("invitations")
+}
+
+// Equivalent of Laravel Sanctum's personal_access_tokens table
+model PersonalAccessToken {
+  id         Int       @id @default(autoincrement())
+  userId     Int       @map("user_id")
+  name       String    @db.VarChar(255)
+  // SHA-256 of the plain-text token; the plain value is only shown once
+  token      String    @unique @db.Char(64)
+  lastUsedAt DateTime? @map("last_used_at")
+  expiresAt  DateTime? @map("expires_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("personal_access_tokens")
+}

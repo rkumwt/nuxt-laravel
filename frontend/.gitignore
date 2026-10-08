@@ -1,3 +1,6 @@
+# Dependencies
+node_modules
+
 # Nuxt dev/build outputs
 .output
 .data
@@ -6,19 +9,23 @@
 .cache
 dist
 
-# Node dependencies
-node_modules
+# Testing / type-check caches
+coverage
+*.tsbuildinfo
+.eslintcache
+
+# Environment (keep only the example)
+.env
+.env.*
+!.env.example
 
 # Logs
 logs
 *.log
 
-# Misc
+# OS / editors
 .DS_Store
+Thumbs.db
 .fleet
 .idea
-
-# Local env files
-.env
-.env.*
-!.env.example
+.vscode

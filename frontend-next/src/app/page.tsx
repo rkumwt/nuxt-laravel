@@ -1,0 +1,13 @@
+import type { Metadata } from "next";
+import AuthGuard from "@/components/auth/AuthGuard";
+import LoginForm from "@/components/auth/LoginForm";
+
+export const metadata: Metadata = { title: "Login" };
+
+export default function LoginPage() {
+  return (
+    <AuthGuard requireUnauth>
+      <LoginForm />
+    </AuthGuard>
+  );
+}
